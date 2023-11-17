@@ -78,5 +78,6 @@ DATASET_TO_METRIC = {
     data.Zoo:                        F1(preprocessing='standard', average='macro'),
     data.Banknote:                   F1(preprocessing='standard', average='binary'),
     data.CarEvaluation:              F1(preprocessing='standard', average='macro'),
-    data.Wilt:                       F1(preprocessing='standard', average='binary')
+    data.Wilt:                       F1(preprocessing='standard', average='binary'),
+    data.Transformator:              F1(preprocessing=None, average='macro')
 }

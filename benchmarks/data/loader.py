@@ -235,6 +235,15 @@ class Wilt(ArffParser):
         return Dataset('Wilt', features, targets)
 
 
+class Transformator(TextParser):
+    def __init__(self):
+        super().__init__('transformator/transformator.csv', spliter=',')
+
+    def load_dataset(self) -> Dataset:
+        features, targets = self.parse_file(index_target=-1)
+        return Dataset('Transformator', features, targets)
+
+
 def get_datasets(*args) -> List[Dataset]:
     result = []
     for dataset in args:

@@ -50,7 +50,8 @@ NAME_TO_DATASET = {
     'semeion': data.Semeion,
     'statlog-segmentation': data.StatlogSegmentation,
     'wilt': data.Wilt,
-    'zoo': data.Zoo
+    'zoo': data.Zoo,
+    'transformator': data.Transformator
 }
 
 
