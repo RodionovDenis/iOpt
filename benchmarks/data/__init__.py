@@ -13,7 +13,8 @@ from .loader import (Dataset,
                      Banknote,
                      CarEvaluation,
                      Wilt,
-                     Transformator)
+                     Transformator,
+                     Turbine)
 
 __all__ = [Dataset, BreastCancer, Digits, BankMarketing, CNAE9, StatlogSegmentation, Semeion, Ecoli,
-           CreditApproval, Balance, Parkinsons, Zoo, Banknote, CarEvaluation, Wilt, Transformator]
+           CreditApproval, Balance, Parkinsons, Zoo, Banknote, CarEvaluation, Wilt, Transformator, Turbine]
