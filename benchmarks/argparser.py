@@ -4,17 +4,21 @@ from argparse import ArgumentParser
 from dataclasses import dataclass, field
 
 from hyperparams import Hyperparameter, Numerical, Categorial
-from sklearn.svm import SVC
+from sklearn.svm import SVC, SVR
 from xgboost import XGBClassifier, XGBRegressor
-from sklearn.neural_network import MLPClassifier
+from sklearn.neural_network import MLPClassifier, MLPRegressor
 from functools import partial
 
 
 METHOD_TO_HYPERPARAMS = {
     SVC: {
-        'gamma': Numerical('float', 1e-9, 1e-6, is_log_scale=True),
-        'C': Numerical('int', 1, 1e10, is_log_scale=True),
-        'kernel': Categorial('poly', 'rbf', 'sigmoid')
+        'gamma': Numerical('float', 1e-3, 1, is_log_scale=True),
+        'C': Numerical('int', 1e5, 1e9, is_log_scale=True),
+    },
+
+    SVR: {
+        'gamma': Numerical('float', 1e-5, 1, is_log_scale=True),
+        'C': Numerical('int', 1, 1e5, is_log_scale=True)
     },
 
     XGBClassifier: {
@@ -28,11 +32,18 @@ METHOD_TO_HYPERPARAMS = {
     },
     
     XGBRegressor: {
-        'gamma': Numerical('float', 0.2, 0.3),
-        'learning_rate': Numerical('float', 0.2, 0.4)
+        'subsample': Numerical('float', 0.5, 1.0),
+        'learning_rate': Numerical('float', 0.1, 0.4)
     },
 
     MLPClassifier: {
+        'hidden_layer_sizes': Numerical('int', 2, 150),
+        'activation': Categorial('identity', 'logistic', 'tanh', 'relu'),
+        'solver': Categorial('lbfgs', 'sgd', 'adam'),
+        'alpha': Numerical('float', 1e-9, 1e-1, is_log_scale=True)
+    },
+    
+    MLPRegressor: {
         'hidden_layer_sizes': Numerical('int', 2, 150),
         'activation': Categorial('identity', 'logistic', 'tanh', 'relu'),
         'solver': Categorial('lbfgs', 'sgd', 'adam'),
@@ -60,6 +71,18 @@ NAME_TO_DATASET = {
     'turbine': data.Turbine
 }
 
+NAME_TO_ESTIMATOR = {
+    'svc': partial(SVC, max_iter=1000),
+    'svr': partial(SVR, max_iter=1000),
+    
+    'xgbclassifier': partial(XGBClassifier, n_jobs=1),
+    'xgbregressor': partial(XGBRegressor, n_jobs=1),
+    
+    
+    'mlpclassifier': MLPClassifier,
+    'mlpregressor': MLPRegressor
+}
+
 
 @dataclass
 class ConsoleArgument:
@@ -79,15 +102,10 @@ class ConsoleArgument:
 
 
 def get_estimator(name: str) -> SVC | XGBClassifier | MLPClassifier:
-    if name == 'svc':
-        return partial(SVC, max_iter=1000)
-    elif name == 'xgbclassifier':
-        return partial(XGBClassifier, n_jobs=1)
-    elif name == 'mlpclassifier':
-        return MLPClassifier
-    elif name == 'xgbregressor':
-        return partial(XGBRegressor, n_jobs=1)
-    raise ValueError(f'Estimator "{name}" do not support')
+    try:
+        return NAME_TO_ESTIMATOR[name]
+    except:
+        raise ValueError(f'Estimator "{name}" do not support')
 
 
 def get_datasets(names: str) -> data.Dataset:
