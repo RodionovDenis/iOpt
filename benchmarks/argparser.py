@@ -45,7 +45,7 @@ METHOD_TO_HYPERPARAMS = {
     
     MLPRegressor: {
         'hidden_layer_sizes': Numerical('int', 2, 150),
-        'activation': Categorial('identity', 'logistic', 'tanh', 'relu'),
+        'activation': Categorial('logistic', 'tanh', 'relu'),
         'solver': Categorial('lbfgs', 'sgd', 'adam'),
         'alpha': Numerical('float', 1e-9, 1e-1, is_log_scale=True)
     }
