@@ -12,42 +12,15 @@ from functools import partial
 
 METHOD_TO_HYPERPARAMS = {
     SVC: {
-        'gamma': Numerical('float', 1e-3, 1, is_log_scale=True),
+        'gamma': Numerical('float', 1e-3, 1e1, is_log_scale=True),
         'C': Numerical('int', 1e5, 1e9, is_log_scale=True),
-    },
-
-    SVR: {
-        'gamma': Numerical('float', 1e-5, 1, is_log_scale=True),
-        'C': Numerical('int', 1, 1e5, is_log_scale=True)
-    },
-
-    XGBClassifier: {
-        'n_estimators': Numerical('int', 10, 200),
-        'max_depth': Numerical('int', 5, 20),
-        'min_child_weight': Numerical('int', 1, 10),
-        'gamma': Numerical('float', 0.01, 0.6),
-        'subsample': Numerical('float', 0.05, 0.95),
-        'colsample_bytree': Numerical('float', 0.05, 0.95),
-        'learning_rate': Numerical('float', 0.001, 0.1, is_log_scale=True)
+        'kernel': Categorial('poly', 'rbf', 'sigmoid')
     },
     
     XGBRegressor: {
-        'subsample': Numerical('float', 0.5, 1.0),
-        'learning_rate': Numerical('float', 0.1, 0.4)
-    },
-
-    MLPClassifier: {
-        'hidden_layer_sizes': Numerical('int', 2, 150),
-        'activation': Categorial('logistic', 'tanh', 'relu'),
-        'solver': Categorial('lbfgs', 'sgd', 'adam'),
-        'alpha': Numerical('float', 1e-9, 1e-1, is_log_scale=True)
-    },
-    
-    MLPRegressor: {
-        'hidden_layer_sizes': Numerical('int', 2, 150),
-        'activation': Categorial('logistic', 'tanh', 'relu'),
-        'solver': Categorial('lbfgs', 'sgd', 'adam'),
-        'alpha': Numerical('float', 1e-9, 1e-1, is_log_scale=True)
+        'gamma': Numerical('float', 0.2, 0.3),
+        'learning_rate': Numerical('float', 0.2, 0.4),
+        'booster': Categorial('gblinear', 'gbtree', 'dart')
     }
 }
 
@@ -93,6 +66,8 @@ class ConsoleArgument:
     dir: str
     trials: int
     n_jobs: int
+    
+    iopt_npp: int
 
     def __post_init__(self):
         estimator = self.estimator
@@ -137,13 +112,15 @@ def parse_arguments():
     parser.add_argument('--dir', default='result')
     parser.add_argument('--trials', type=int, default=1)
     parser.add_argument('--n-jobs', type=int, default=1)
+    parser.add_argument('--iopt_npp', type=int, default=1)
     
     args = parser.parse_args()
     assert args.max_iter > 0, 'Max iter must be positive'
     assert args.trials > 0, 'Trials must be positive'
     assert args.n_jobs > 0, 'n_jobs must be positive'
+    assert args.iopt_npp > 0
 
     return ConsoleArgument(args.max_iter,
                            get_estimator(args.method),
                            get_datasets(args.dataset),
-                           args.dir, args.trials, args.n_jobs)
+                           args.dir, args.trials, args.n_jobs, args.iopt_npp)

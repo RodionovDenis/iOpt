@@ -12,8 +12,11 @@ def main():
         OptunaSearcher(arguments.max_iter, algorithm='cmaes'),
         OptunaSearcher(arguments.max_iter, algorithm='nsgaii'),
         HyperoptSearcher(arguments.max_iter),
-        iOptSearcher(arguments.max_iter, r=3, refine_solution=True,
-                     proportion_of_global_iterations=0.75)
+        iOptSearcher(arguments.max_iter,
+                     r=3,
+                     refine_solution=True,
+                     proportion_of_global_iterations=0.75,
+                     number_of_parallel_points=arguments.iopt_npp)
     ]
 
     experiment = Experiment(arguments.estimator,
